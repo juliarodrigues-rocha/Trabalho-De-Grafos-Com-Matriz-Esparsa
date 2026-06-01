@@ -1,0 +1,115 @@
+============================================================================================================
+                        DIÁRIO DE DESENVOLVIMENTO
+                Trabalho de Grafos com Matriz Esparsa - ANAC
+                     Estrutura e Recuperação de Dados II
+============================================================================================================
+Aluna: Júlia Rodrigues da Rocha
+RA: 25005897
+============================================================================================================
+
+
+------------------------------------------------------------------------------------------------------------
+DATA: 31/05/2026 (Sábado)
+------------------------------------------------------------------------------------------------------------
+* SESSÃO 1 — Função 4: Listagem de voos saindo de um aeroporto
+   Início: 16:05 | Término: 19:38
+ 
+   Antes de começar a implementar minha parte, reli o enunciado do trabalho e analisei os arquivos que já 
+   estavam prontos pela emely: aeroporto.h, aeroporto.c, matriz_esparsa.h, matriz_esparsa.c e a main.c
+   Era importante entender bem como a matriz esparsa estava estruturada antes de escrever qualquer coisa, 
+   porque minha função precisaria percorrer essa estrutura corretamente.
+ 
+   Percebi que a matriz esparsa usa um vetor de ponteiros (voos_linha), onde cada posição representa um aeroporto de origem. 
+   Cada posição aponta para uma lista encadeada de nós (NoMatriz), onde cada nó guarda a coluna (id do aeroporto destino) 
+   e a distancia (que no nosso projeto é o número do voo). 
+   Com isso entendido, ficou mais claro o que a função 4 precisava fazer.
+ 
+   Criei os arquivos grafo.h e grafo.c. 
+   No grafo.h, escrevi os protótipos das duas funções que ficaram sob minha responsabilidade, 
+   seguindo o mesmo padrão de organização que a emely usou nos outros arquivos dela.
+ 
+   Para a função 4 (listar_voos_de_aeroporto), a lógica que desenvolvi foi:
+   receber a sigla do aeroporto de origem, usar a função buscar_id_por_sigla para obter 
+   o id correspondente no vetor dinâmico, e em seguida acessar a linha desse id na matriz esparsa. 
+   A partir daí, basta percorrer a lista encadeada daquela linha (cada nó encontrado é um voo cadastrado saindo daquele aeroporto.)
+ 
+   Adicionei verificações de consistência antes de percorrer a lista:
+   checar se a sigla existe no vetor (id diferente de -1), checar se o id está dentro dos limites da matriz, 
+   e checar se a lista daquela linha não está vazia. 
+   Em cada caso de erro ou ausência de dados, a função exibe uma mensagem explicativa ao invés de simplesmente não fazer nada.
+ 
+   Tive um momento de dúvida sobre como imprimir o nome da cidade destino, já que o nó da matriz só guarda o id (coluna). 
+   Resolvi a dúvida usando esse id como índice direto no vetor de aeroportos (vetor->aero[id_destino].cidade),
+   o que funcionou bem porque o id de cada aeroporto é justamente sua posição no vetor, conforme implementado pela emely em aeroporto.c.
+ 
+   Fiz alguns testes mentais com os dados do enunciado para conferir se a lógica estava correta
+   por exemplo, saindo de GRU (id 3), os voos cadastrados são para BSB (050), CNF (102) e GIG (089), 
+   o que bate com o diagrama da Figura 1 do enunciado.
+
+
+
+
+* SESSÃO 2 — Função 5: Listagem de trajetos entre dois aeroportos
+    Início: 19:50 | Término: 21:42
+
+   Essa função foi a parte mais desafiadora da minha parte do trabalho. 
+   O enunciado pedia pra listar todos os trajetos possíveis entre dois aeroportos, tanto diretos quanto com escalas. 
+   Pra resolver isso, decidi usar busca em profundidade (DFS — Depth First Search).
+ 
+   A ideia central da DFS aplicada ao problema é: a partir do aeroporto de origem, visitar cada aeroporto vizinho 
+   que ainda não foi visitado naquele caminho. Se chegarmos ao destino, imprimimos o caminho percorrido. 
+   Se não, continuamos descendo. Quando não há mais vizinhos para explorar, voltamos(backtrack) e tentamos outro caminho.
+ 
+   O ponto mais importante que precisei pensar foi justamente o backtrack: ao voltar de um caminho, é preciso 
+   desmarcar o aeroporto como visitado, senão ele ficaria bloqueado para os próximos caminhos. 
+   Isso é o que permite que a DFS encontre todos os caminhos possíveis e não apenas um.
+ 
+   Implementei a função em duas partes dentro do grafo.c:
+   A primeira é uma função auxiliar estática chamada dfs(), que recebe a matriz, o vetor, o id do aeroporto atual,
+   o id do destino, um array de visitados, um array que guarda o caminho percorrido até o momento, e o tamanho atual desse caminho. 
+   Ela é estática porque é apenas um detalhe interno de implementação (quem chama de fora é sempre a função principal)
+ 
+   A segunda é a função pública listar_trajetos(), que valida as siglas recebidas, aloca os arrays auxiliares com tamanho 
+   igual ao número de aeroportos cadastrados, inicializa tudo com zero e dispara a DFS.
+ 
+   Usei arrays locais de tamanho variável (VLA — Variable Length Array) para os vetores visitado[] e caminho[], com base em vetor->tamanho.
+   Isso evita alocar memória dinamicamente para estruturas temporárias simples, e funciona bem porque o tamanho 
+   só precisa existir durante a execução da função.
+ 
+   Para imprimir o caminho quando chego ao destino, percorro o array caminho[] e imprimo cada aeroporto separado por " -> "
+   o que deixa a saída fácil de ler.
+ 
+   Fiz a verificação se origem e destino são o mesmo aeroporto, retornando uma mensagem de erro nesse caso, 
+   já que não faria sentido buscar trajetos.
+
+
+
+
+
+* SESSÃO 3 — Main com menu complet(o mas ainda sem ter as funções da gi para poder testar o funcionamento correto)
+   Início: 21:42 | Término: 22:56
+ 
+   Com as duas funções 'prontas' e testadas mentalmente (porque as primeiras três funções da gi ainda não estavam 
+   prontas pra poder testar as minhas) passei para a implementação da main.c, com o objetivo era montar um 
+   menu interativo que integrasse todas as cinco operações do trabalho de forma organizada.
+ 
+   Estruturei a main em funções auxiliares separadas para cada opção do menu 
+   (opcao_cadastrar_aeroporto, opcao_cadastrar_voo, opcao_remover_voo), ao invés de colocar tudo dentro do switch diretamente. 
+   Fiz desse jeito para deixar a main mais limpa e cada operação mais fácil de localizar e explicar.
+ 
+   Para a opção 1 (cadastrar aeroporto), além de chamar inserir_aeroporto, precisei lembrar de chamar reajustar_matriz 
+   logo em seguida quando o vetor cresce além da capacidade atual da matriz. 
+   Esse foi um detalhe importante: a matriz e o vetor precisam estar sempre em sincronia em termos de tamanho,
+   porque os ids do vetor são usados como índices de linha e coluna na matriz.
+ 
+   Para a opção 3 (remover voo pelo número), precisei percorrer toda a matriz para encontrar qual aresta tem 
+   aquele número de voo, já que a remoção na matriz esparsa é feita por linha e coluna (não pelo valor armazenado)
+ 
+   Adicionei pré-carregamento automático dos aeroportos e voos do enunciado 
+   (os cinco aeroportos BSB, CNF, GIG, GRU, SSA e os voos do diagrama daFigura 1) para facilitar os testes na apresentação.
+ 
+   Também implementei uma função limpar_buffer() para evitar problemas de leitura com o scanf após entradas numéricas, 
+   o que é um problema comum ao misturar leitura de int com strings no mesmo programa.
+ 
+   Por fim, garanti que ao encerrar o programa (opção 0), a memória alocada pelo vetor e pela matriz é liberada corretamente 
+   com liberar_vetor e liberar_matriz, conforme as funções já implementadas pela emely.
