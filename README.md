@@ -43,5 +43,5 @@ Prontinho, o sistema vai estar rodando!
 | Nome | Responsabilidade |
 |------|-----------------|
 | Emely | Matriz esparsa e vetor dinâmico de aeroportos |
-| Gi | Funções 1, 2 e 3 — Cadastrar aeroporto, cadastrar voo e remover voo |
+| Giovana | Funções 1, 2 e 3 — Cadastrar aeroporto, cadastrar voo e remover voo |
 | Júlia | Funções 4 e 5 — Listar voos e trajetos, e main final |
