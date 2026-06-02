@@ -5,8 +5,6 @@
 #include <stdlib.h> // Usar atoi
 
 /* Giovana - Valida o nome da cidade
-
-   - Deve conter pelo menos uma letra
    - Pode conter apenas letras e espaços
    - Não aceita números ou caracteres especiais
 */
@@ -30,10 +28,8 @@ int cidade_valida(const char *cidade) {
 }
 
 /* Giovana - Valida a sigla do aeroporto
-
    - Deve possuir exatamente 3 caracteres
-   - Todos os caracteres devem ser letras
-   - Não aceita números, espaços ou símbolos
+   - Todos os caracteres devem ser letras -> Não aceita números, espaços ou símbolos
 */
 int sigla_valida(const char *sigla) {
     // Só pode haver 3 letras
@@ -54,8 +50,7 @@ int sigla_valida(const char *sigla) {
 }
 
 /* Giovana - Converte texto para maiúsculo
-
-   Padronizei as siglas dos aeroportos para melhorar as buscas e inserções
+   - Padronizei as siglas dos aeroportos para melhorar as buscas e inserções
 */
 void converter_para_maiusculo(char *texto) {
     // Percorre a string
@@ -68,7 +63,6 @@ void converter_para_maiusculo(char *texto) {
 
 /* 
    Giovana - Valida número do voo
-
    - Deve conter apenas dígitos
    - Deve possuir entre 1 e 4 dígitos
    - Não aceita letras, símbolos ou espaços
@@ -262,6 +256,7 @@ void listar_trajetos(MatrizEsparsa* matriz, VetorAeroportos* vetor, char* sigla_
 
 
 // Giovana - Cadastrar um novo aeroporto
+// Ponteiros apontando para a struct
 void cadastrar_aeroporto(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
     char cidade[50];
     char sigla[5];
@@ -269,6 +264,7 @@ void cadastrar_aeroporto(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
     printf("Nome da cidade: ");
     scanf(" %49[^\n]", cidade);
 
+    // Se return = 0; então o if embaixo é true
     if (!cidade_valida(cidade)) {
         printf("Inválido! O nome da cidade deve conter apenas letras e espacos.\n");
         return;
@@ -287,7 +283,7 @@ void cadastrar_aeroporto(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
     /* 
        Verificar duplicidade
        Essa função percorre todos os aeroportos, comparando as siglas
-       Se encontrar -> Ja cadastrado
+       Se encontrar -> Ja cadastrado, retorna ID numérico do aeroporto
        Se não encontrar -> -1 
     */
     if (buscar_id_por_sigla(vetor, sigla) != -1) {
@@ -295,12 +291,14 @@ void cadastrar_aeroporto(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
         return;
     }
 
-    // Se não tiver cadastrado, eu chamo a função para inserir
-    inserir_aeroporto(vetor, cidade, sigla); // Copia para a próxima posição do vetor
+    // Copia cidade e sigla para a próxima posição livre do vetor de aeroporto
+    inserir_aeroporto(vetor, cidade, sigla); // Tem o ID
 
     // Aumentar a matriz se estiver cheia
     if (vetor->tamanho > matriz->capacidade) {
-        reajustar_matriz(matriz, vetor->tamanho);
+
+        // O aeroporto novo ganha sua própria linha na matriz,
+        reajustar_matriz(matriz, vetor->tamanho); // Índice NULL
     }
 
     printf("Aeroporto %s (%s) cadastrado com sucesso!\n",
@@ -337,7 +335,7 @@ void cadastrar_voo(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
 
     // Lê o número do voo.
     printf("Numero do voo: ");
-    scanf(" %19s", entrada_voo);
+    scanf(" %19s", entrada_voo); // Vai colocar na matriz
 
     if (!numero_voo_valido(entrada_voo)) {
         printf("Inválido!. O numero do voo deve conter apenas digitos e ter no maximo 4 digitos.\n");
@@ -392,7 +390,7 @@ void cadastrar_voo(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
 
 // Giovana - Remover um voo pelo número
 void remover_voo_por_numero(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
-    char entrada_voo[20];
+    char entrada_voo[20]; // Ler como string primeiro para poder validar
     int numero_voo;
 
     // ler entrada
@@ -423,19 +421,20 @@ void remover_voo_por_numero(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
     for (int i = 0; i < matriz->capacidade; i++) {
         NoMatriz* atual = matriz->voos_linha[i];
 
-        // Percorrer a lista daquela linha
+        // Percorrer cada nó dentro da linha
         while (atual != NULL) {
 
             // Comparar o número do voo
             if (atual->distancia == numero_voo) {
 
-                //(matriz, linha, coluna)
+                // (matriz, linha(índice do for), coluna)
+                // [origem][destino] no voo da matriz
                 remover_voo(matriz, i, atual->coluna);
 
                 printf("Voo %03d removido com sucesso!\n",
                        numero_voo);
 
-                // Encontrado -> Sai do while
+                // Sinal para o for saber que o while achou o que queria
                 encontrado = 1;
                 break;
             }

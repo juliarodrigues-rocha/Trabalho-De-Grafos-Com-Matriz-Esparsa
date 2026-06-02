@@ -50,7 +50,7 @@ bool guardar_voo(MatrizEsparsa* m, int linha, int coluna, int distancia) {
             novo_voo->coluna = coluna;
             novo_voo->distancia = distancia;
 
-            /* Correção feita por Giovana: encadeia respeitando a posição ordenada
+            /* Correção feita por Giovana
             Antes: Sempre insere o novo voo no começo da lista
             Agora: Insere exatamente onde o while determinou, mantendo a ordenação por coluna
             */
