@@ -25,9 +25,9 @@ Horário de fim: 17:02
 Atividade: Corrigi alguns erros nas funções de cadastrar, pois estava aceitando números quando pediamos cidades, pensei na implementação de funções para validações. Comecei pela função "cidade_valida", onde pensei em percorrer a cidade por um ponteiro, para ver se achava respostas incosistentes. Depois, fui para a função: "sigla_valida", onde percorri os caracteres pelo "for" e "converter_para_maiusculo" que foram as mais simples de pensar. Descobri sobre o "atoi" que converte string para int, útil nas minhas validações.
 
 Dia 01/06
-Horário Início: 18:52 -> Porém fui jantar no meio do tempo e não sei quanto tempo gastei.
+Horário Início: 18:52
 Horário fim: 20:10
-Atividade: Inseri a função "remover_voo". Notei alguns erros em "remover_voo" e ajustei o programa. Inseri a validação com a função "numero_voo_valido" que também foi mais simples de pensar.
+Atividade: Inseri a função "remover_voo". Notei alguns erros em "remover_voo" e ajustei o programa. Inseri a validação com a função "numero_voo_valido" que também foi mais simples de pensar. Como já tinha entendido como funcionada a matriz a partir dos cadastros, para fazer a lógica da "remover_voo" foi mais simples de pensar.
 
 
 Dia 02/06
