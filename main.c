@@ -25,111 +25,6 @@ void exibir_menu() {
     printf("Escolha uma opcao: ");
 }
 
-// Opção 1: cadastra um novo aeroporto no vetor e expande a matriz se necessário
-void opcao_cadastrar_aeroporto(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
-    char cidade[50];
-    char sigla[5];
-
-    printf("Nome da cidade: ");
-    scanf(" %49[^\n]", cidade);
-    printf("Sigla do aeroporto (ex: GRU): ");
-    scanf(" %4s", sigla);
-
-    // Verifica se a sigla já existe para evitar duplicata
-    if (buscar_id_por_sigla(vetor, sigla) != -1) {
-        printf("Erro: aeroporto '%s' ja esta cadastrado.\n", sigla);
-        return;
-    }
-
-    inserir_aeroporto(vetor, cidade, sigla);
-
-    // A matriz precisa crescer junto com o vetor de aeroportos
-    // (uma linha/coluna nova para o aeroporto recém-cadastrado)
-    if (vetor->tamanho > matriz->capacidade) {
-        reajustar_matriz(matriz, vetor->tamanho);
-    }
-
-    printf("Aeroporto %s (%s) cadastrado com sucesso!\n", cidade, sigla);
-}
-
-// Opção 2: cadastra um voo (aresta) entre dois aeroportos
-void opcao_cadastrar_voo(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
-    char sigla_origem[5];
-    char sigla_destino[5];
-    int numero_voo;
-
-    printf("Sigla do aeroporto de origem: ");
-    scanf(" %4s", sigla_origem);
-    printf("Sigla do aeroporto de destino: ");
-    scanf(" %4s", sigla_destino);
-    printf("Numero do voo: ");
-    scanf("%d", &numero_voo);
-
-    int id_origem  = buscar_id_por_sigla(vetor, sigla_origem);
-    int id_destino = buscar_id_por_sigla(vetor, sigla_destino);
-
-    if (id_origem == -1) {
-        printf("Erro: aeroporto de origem '%s' nao encontrado.\n", sigla_origem);
-        return;
-    }
-    if (id_destino == -1) {
-        printf("Erro: aeroporto de destino '%s' nao encontrado.\n", sigla_destino);
-        return;
-    }
-    if (id_origem == id_destino) {
-        printf("Erro: origem e destino nao podem ser o mesmo aeroporto.\n");
-        return;
-    }
-    if (numero_voo <= 0) {
-        printf("Erro: numero do voo invalido.\n");
-        return;
-    }
-
-    // Verifica se já existe um voo cadastrado nessa rota
-    if (obter_distancia(matriz, id_origem, id_destino) != matriz->valor_padrao) {
-        printf("Erro: ja existe um voo cadastrado de %s para %s.\n",
-               sigla_origem, sigla_destino);
-        return;
-    }
-
-    // Na matriz esparsa, usamos o campo "distancia" para guardar o número do voo
-    guardar_voo(matriz, id_origem, id_destino, numero_voo);
-    printf("Voo %03d de %s para %s cadastrado com sucesso!\n",
-           numero_voo, sigla_origem, sigla_destino);
-}
-
-// Opção 3: remove um voo indicado pelo número
-void opcao_remover_voo(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
-    int numero_voo;
-
-    printf("Numero do voo a remover: ");
-    scanf("%d", &numero_voo);
-
-    // Precisa procurar na matriz qual aresta tem esse número de voo
-    int encontrado = 0;
-
-    for (int i = 0; i < matriz->capacidade; i++) {
-        NoMatriz* atual = matriz->voos_linha[i];
-
-        while (atual != NULL) {
-            if (atual->distancia == numero_voo) {
-                // Encontrou o voo: remove a aresta da matriz
-                remover_voo(matriz, i, atual->coluna);
-                printf("Voo %03d removido com sucesso!\n", numero_voo);
-                encontrado = 1;
-                break;
-            }
-            atual = atual->proxima_linha;
-        }
-
-        if (encontrado) break;
-    }
-
-    if (!encontrado) {
-        printf("Erro: voo %03d nao encontrado.\n", numero_voo);
-    }
-}
-
 // ==========================================
 // Função principal com o menu interativo
 // ==========================================
@@ -171,15 +66,15 @@ int main() {
 
         switch (opcao) {
             case 1:
-                opcao_cadastrar_aeroporto(&vetor, &matriz);
+                cadastrar_aeroporto(&vetor, &matriz);
                 break;
 
             case 2:
-                opcao_cadastrar_voo(&vetor, &matriz);
+                cadastrar_voo(&vetor, &matriz);
                 break;
 
             case 3:
-                opcao_remover_voo(&vetor, &matriz);
+                remover_voo_por_numero(&vetor, &matriz);
                 break;
 
             case 4: {

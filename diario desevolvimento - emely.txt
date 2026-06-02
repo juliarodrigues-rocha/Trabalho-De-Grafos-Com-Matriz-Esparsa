@@ -1,0 +1,27 @@
+Dia 13/05, 21h30 - 22h
+
+Eu, Giovana e Julia formamos um grupo e nos dividimos para fazer o trabalho. Sendo que eu fiquei responsável pelas structs e inicialização tanto do grafo quanto da matriz esparsa e as meninas vão se dividir para implementar o hard code e as funções do menu de opções.
+
+Dia 15/05, 14h - 15h15
+
+Comecei a desenvolver as structs e entender quais eram as necessidades de cada uma.
+
+Dia 18/05, 9h-11h
+
+Corrigi as structs que tinham elementos inconsistentes e erros de adequação a linguagem. Separei os arquivos em .h e .c e desenvolvi duas funções: inicializar_grafo e inserir_aeroporto.
+
+Dia 19/05, 10h-13h
+
+Terminei de fazer as funções principais, inclusive algumas auxiliares como o "buscar_sigla_por_id" para facilitar.
+Precisei reinstalar o gcc em meu laptop pois não conseguia testar o programa e isso levou tempo, pois houve bugs.
+
+Dia 25/05, 10h-13h
+
+Após a última aula de quarta-feira, notei que a matriz esparsa que havia desenvolvido no projeto não seguia o modelo que o André havia explicado, logo, precisei ajustar structs, mudar nomes e parâmetros das funções como "inicializar_grafo" para "inicializar_matriz" e acrescentei algumas funções ligadas ao comportamento da matriz esparsa, como obter_distancia e remover_voo. 
+Realizei alguns testes e enviei para as outras integrantes do grupo darem continuidade.
+
+Dia 30/05, 13h40-14h40
+
+Após uma conversa com o professor na quarta feira, verificamos que o nosso trabalho poderia ser organizado de uma maneira mais coerente.
+Por isso, modifiquei as structs e adicionais mais algumas, além disso, separei a parte inicial em aeroporto .h e .c e a matriz_esparsa .h e .c, adicionei também uma main só para verificar se o vetor de aeroportos e a matriz estavam funcionando como previsto.
+Enfim, enviei novamente o trabalho para as meninas darem continuidade e encerrar, de forma eficaz, esse trabalho de estrutura de dados.

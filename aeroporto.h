@@ -5,7 +5,7 @@
 
 typedef struct {
     char cidade[50];
-    char sigla[5];
+    char sigla[4]; 
     int id;
 } Aeroporto;
 

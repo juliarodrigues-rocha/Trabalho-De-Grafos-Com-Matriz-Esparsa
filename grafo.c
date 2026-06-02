@@ -1,7 +1,99 @@
 #include <stdio.h>
 #include <string.h>
 #include "grafo.h"
+#include <ctype.h>
+#include <stdlib.h> // Usar atoi
 
+/* Giovana - Valida o nome da cidade
+
+   - Deve conter pelo menos uma letra
+   - Pode conter apenas letras e espaços
+   - Não aceita números ou caracteres especiais
+*/
+int cidade_valida(const char *cidade) {
+    int tem_letra = 0; // Serve para garantir que existe pelo menos uma letra
+
+    // Analisa caractere por caractere
+    while (*cidade) {
+        if (isalpha((unsigned char)*cidade)) {
+            tem_letra = 1;
+        }
+        // Se não for letra e não for espaço:
+        else if (*cidade != ' ') {
+            return 0; // Se não tem letra, já retorna 0
+        }
+
+        cidade++; // O ponteiro avança
+    }
+
+    return tem_letra; // Válido.
+}
+
+/* Giovana - Valida a sigla do aeroporto
+
+   - Deve possuir exatamente 3 caracteres
+   - Todos os caracteres devem ser letras
+   - Não aceita números, espaços ou símbolos
+*/
+int sigla_valida(const char *sigla) {
+    // Só pode haver 3 letras
+    if (strlen(sigla) != 3) {
+        return 0; // Inválido
+    }
+
+    // Percorre os caracteres
+    for (int i = 0; sigla[i] != '\0'; i++) {
+
+        // Verifica se cada caractere é letra
+        if (!isalpha((unsigned char)sigla[i])) {
+            return 0; // Inválido
+        }
+    }
+
+    return 1; // Válido
+}
+
+/* Giovana - Converte texto para maiúsculo
+
+   Padronizei as siglas dos aeroportos para melhorar as buscas e inserções
+*/
+void converter_para_maiusculo(char *texto) {
+    // Percorre a string
+    for (int i = 0; texto[i] != '\0'; i++) {
+
+        // Converte cada letra
+        texto[i] = toupper((unsigned char)texto[i]);
+    }
+}
+
+/* 
+   Giovana - Valida número do voo
+
+   - Deve conter apenas dígitos
+   - Deve possuir entre 1 e 4 dígitos
+   - Não aceita letras, símbolos ou espaços
+*/
+int numero_voo_valido(const char *texto) {
+
+    // Está vazio?
+    if (strlen(texto) == 0) {
+        return 0;
+    }
+
+    // Maior do que 4 caracteres?
+    if (strlen(texto) > 4) {
+        return 0;
+    }
+
+    // Percorre cada caractere e verifica se é digito
+    for (int i = 0; texto[i] != '\0'; i++) {
+        if (!isdigit((unsigned char)texto[i])) {
+            return 0;
+        }
+    }
+
+    return 1; // Valida se todos forem números
+}
 
 //                   JÚLIA - 31/05/2026
 /* =========================================================
@@ -166,4 +258,199 @@ void listar_trajetos(MatrizEsparsa* matriz, VetorAeroportos* vetor, char* sigla_
     dfs(matriz, vetor, id_origem, id_destino, visitado, caminho, 0);
 
     printf("------------------------------------------\n");
+}
+
+
+// Giovana - Cadastrar um novo aeroporto
+void cadastrar_aeroporto(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
+    char cidade[50];
+    char sigla[5];
+
+    printf("Nome da cidade: ");
+    scanf(" %49[^\n]", cidade);
+
+    if (!cidade_valida(cidade)) {
+        printf("Inválido! O nome da cidade deve conter apenas letras e espacos.\n");
+        return;
+    }
+
+    printf("Sigla do aeroporto (ex: GRU): ");
+    scanf(" %4s", sigla);
+
+    if (!sigla_valida(sigla)) {
+        printf("Inválido! A sigla deve conter exatamente 3 letras.\n");
+        return;
+    }
+
+    converter_para_maiusculo(sigla);
+
+    /* 
+       Verificar duplicidade
+       Essa função percorre todos os aeroportos, comparando as siglas
+       Se encontrar -> Ja cadastrado
+       Se não encontrar -> -1 
+    */
+    if (buscar_id_por_sigla(vetor, sigla) != -1) {
+        printf("Inválido! Aeroporto '%s' ja esta cadastrado.\n", sigla);
+        return;
+    }
+
+    // Se não tiver cadastrado, eu chamo a função para inserir
+    inserir_aeroporto(vetor, cidade, sigla); // Copia para a próxima posição do vetor
+
+    // Aumentar a matriz se estiver cheia
+    if (vetor->tamanho > matriz->capacidade) {
+        reajustar_matriz(matriz, vetor->tamanho);
+    }
+
+    printf("Aeroporto %s (%s) cadastrado com sucesso!\n",
+           cidade, sigla);
+}
+
+// Giovana - Cadastrar um voo entre dois aeroportos
+void cadastrar_voo(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
+    char sigla_origem[4];
+    char sigla_destino[4];
+    char entrada_voo[20];
+    int numero_voo;
+
+    // Lê as siglas de origem + Validação
+    printf("Sigla do aeroporto de origem: ");
+    scanf(" %3s", sigla_origem);
+
+    if (!sigla_valida(sigla_origem)) {
+        printf("Inválido. A sigla de origem deve conter exatamente 3 letras.\n");
+        return;
+    }
+
+    // Lê as siglas de destino + Validação
+    printf("Sigla do aeroporto de destino: ");
+    scanf(" %3s", sigla_destino);
+
+    if (!sigla_valida(sigla_destino)) {
+        printf("Inválido! A sigla de destino deve conter exatamente 3 letras.\n");
+        return;
+    }
+
+    converter_para_maiusculo(sigla_origem);
+    converter_para_maiusculo(sigla_destino);
+
+    // Lê o número do voo.
+    printf("Numero do voo: ");
+    scanf(" %19s", entrada_voo);
+
+    if (!numero_voo_valido(entrada_voo)) {
+        printf("Inválido!. O numero do voo deve conter apenas digitos e ter no maximo 4 digitos.\n");
+        return;
+    }
+
+    // Aprendi que o ATOI converte texto para inteiro
+    numero_voo = atoi(entrada_voo);
+
+    if (numero_voo <= 0) {
+        printf("Número do voo inválido.\n");
+        return;
+    }
+
+    // Localizar aeroportos pelo ID
+    // Ex: GRU, retorna "3"
+    int id_origem = buscar_id_por_sigla(vetor, sigla_origem);
+    int id_destino = buscar_id_por_sigla(vetor, sigla_destino);
+
+    // Validar existência
+    if (id_origem == -1) { // Se -1 -> Sigla não existe
+        printf("Inválido! Aeroporto de origem '%s' nao encontrado.\n",
+               sigla_origem);
+        return;
+    }
+
+    if (id_destino == -1) {
+        printf("Inválido! Aeroporto de destino '%s' nao encontrado.\n",
+               sigla_destino);
+        return;
+    }
+
+    if (id_origem == id_destino) {
+        printf("Inválido! Origem e destino nao podem ser o mesmo aeroporto.\n");
+        return;
+    }
+
+    // Verificar se já existe, procura na matriz
+    // Se não existir, tem que voltar o valor padrão = "-1"
+    if (obter_distancia(matriz, id_origem, id_destino) != matriz->valor_padrao) {
+        printf("Inválido! Já existe um voo cadastrado de %s para %s.\n",
+               sigla_origem, sigla_destino);
+        return;
+    }
+
+    // Guarda o voo na matriz
+    guardar_voo(matriz, id_origem, id_destino, numero_voo);
+
+    printf("Voo %03d de %s para %s cadastrado com sucesso!\n",
+           numero_voo, sigla_origem, sigla_destino);
+}
+
+// Giovana - Remover um voo pelo número
+void remover_voo_por_numero(VetorAeroportos* vetor, MatrizEsparsa* matriz) {
+    char entrada_voo[20];
+    int numero_voo;
+
+    // ler entrada
+    printf("Numero do voo a remover: ");
+    scanf(" %19s", entrada_voo);
+
+    if (!numero_voo_valido(entrada_voo)) {
+        printf("Inválido! O número do voo deve conter apenas digitos e ter no maximo 4 digitos.\n");
+        return;
+    }
+    
+    // Converter para inteiro
+    numero_voo = atoi(entrada_voo);
+
+    // Verificar se é positivo
+    if (numero_voo <= 0) {
+        printf("Inválido! Número do voo inválido.\n");
+        return;
+    }
+
+    /* 
+       0 = Ainda não encontrei o voo
+       1 = Encontrei
+     */
+    int encontrado = 0;
+
+    // Percorre todas as linhas da matriz, o FOR visita cada linha
+    for (int i = 0; i < matriz->capacidade; i++) {
+        NoMatriz* atual = matriz->voos_linha[i];
+
+        // Percorrer a lista daquela linha
+        while (atual != NULL) {
+
+            // Comparar o número do voo
+            if (atual->distancia == numero_voo) {
+
+                //(matriz, linha, coluna)
+                remover_voo(matriz, i, atual->coluna);
+
+                printf("Voo %03d removido com sucesso!\n",
+                       numero_voo);
+
+                // Encontrado -> Sai do while
+                encontrado = 1;
+                break;
+            }
+
+            atual = atual->proxima_linha;
+        }
+
+        // Sai do for
+        if (encontrado) {
+            break;
+        }
+    }
+
+    if (!encontrado) {
+        printf("Inválido! Voo %03d nao encontrado.\n",
+               numero_voo);
+    }
 }

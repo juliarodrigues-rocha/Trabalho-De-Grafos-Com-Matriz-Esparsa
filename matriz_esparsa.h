@@ -10,6 +10,7 @@ typedef struct NoMatriz {
     struct NoMatriz* proxima_linha; //Próximo aeroporto de origem
 } NoMatriz;
 
+// Cada nó representa um voo
 typedef struct {
     NoMatriz** voos_linha; 
     int capacidade;

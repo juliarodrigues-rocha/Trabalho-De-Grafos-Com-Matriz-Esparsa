@@ -1,0 +1,36 @@
+Nome: Giovana Budri Oliveira
+RA: 25017683
+
+-> Durante as aulas de Estrutura de Dados e via Whatsapp, nosso grupo tentou entender e destrinchar o programa em partes. Ficamos a primeira semana tentando entender como fazia com alguns erros no nosso código inicial, após a última aula de estrutura e conselho do professor, iniciamos o programa corretamente reutilizando algumas funções já feitas.
+
+Dia: 31/05
+Horário de início: 17:44
+Horário de fim: 19h
+Atividade: Durante este período reli o que o trabalho pede e tentei compreender o programa inicial feito pela Emely.
+
+Dia: 01/06
+Horário de início: 10:15
+Horário de fim: 11:18
+Atividade: Tentei compreender o programa seguinte, feito pela Júlia.
+Enquanto estava lendo os arquivos, percebi um bug de inserção em "guardar_voo" no arquivo da "matriz_esparsa.c". Modifiquei a função "guardar_voo".
+
+Dia: 01/06
+Horário de início: 11:30
+Horário de fim: 13:17
+Atividade: Comecei a implementar as funções "cadastrar_voo" e "cadastrar_aeroporto" no arquivo grafo.c e grafo.h. Modifiquei a main retirando algumas funções testes que a Júlia fez e realizei meus primeiros testes do programa.
+
+Dia 01/06
+Horário de início: 15:40
+Horário de fim: 17:02
+Atividade: Corrigi alguns erros nas funções de cadastrar, pois estava aceitando números quando pediamos cidades, pensei na implementação de funções para validações. Comecei pela função "cidade_valida", onde pensei em percorrer a cidade por um ponteiro, para ver se achava respostas incosistentes. Depois, fui para a função: "sigla_valida" e "converter_para_maiusculo" que foram as mais simples de pensar.
+
+Dia 01/06
+Horário Início: 18:52 -> Porém fui jantar no meio do tempo e não sei quanto tempo gastei.
+Horário fim: 20:10
+Atividade: Inseri a função "remover_voo". Notei alguns erros em "remover_voo" e ajustei o programa. Inseri a validação com a função "numero_voo_valido" que também foi mais simples de pensar do que a "cidade_valida".
+
+
+Dia 02/06
+Horário de início: 9:24
+Horário de fim: 12:16
+Atividade: Refiz os testes para testar todas as validações e funções. Estudei mais uma vez o programa para a apresentação.

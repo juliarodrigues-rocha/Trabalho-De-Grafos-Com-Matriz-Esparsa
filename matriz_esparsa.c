@@ -49,9 +49,17 @@ bool guardar_voo(MatrizEsparsa* m, int linha, int coluna, int distancia) {
             novo_voo->linha = linha;
             novo_voo->coluna = coluna;
             novo_voo->distancia = distancia;
-            
-            novo_voo->proxima_linha = m->voos_linha[linha];
-            m->voos_linha[linha] = novo_voo;
+
+            /* Correção feita por Giovana: encadeia respeitando a posição ordenada
+            Antes: Sempre insere o novo voo no começo da lista
+            Agora: Insere exatamente onde o while determinou, mantendo a ordenação por coluna
+            */
+            novo_voo->proxima_linha = atual;
+            if (anterior == NULL) {
+                m->voos_linha[linha] = novo_voo;
+            } else {
+                anterior->proxima_linha = novo_voo;
+            }
         }
         // Condição 2: valor existe e é diferente do valor padrão
     } else if (distancia != m->valor_padrao) {
