@@ -17,7 +17,7 @@ Enquanto estava lendo os arquivos, percebi um bug de inserção em "guardar_voo"
 Dia: 01/06
 Horário de início: 11:30
 Horário de fim: 13:17
-Atividade: Comecei a implementar as funções "cadastrar_voo" e "cadastrar_aeroporto" no arquivo grafo.c e grafo.h. Modifiquei a main retirando algumas funções testes que a Júlia fez e realizei meus primeiros testes do programa. Tive que a todo momento voltar nos arquivos de aeroporto e matriz para usar as funções existentes dentro da minha ao inserir um novo voo e um novo aeroporto.
+Atividade: Comecei a implementar as funções "cadastrar_voo" e "cadastrar_aeroporto" no arquivo grafo.c e grafo.h. Modifiquei a main retirando algumas funções testes que a Júlia fez e realizei meus primeiros testes do programa. Tive que a todo momento voltar nos arquivos de aeroporto e matriz para usar as funções existentes dentro da minha ao inserir um novo voo e um novo aeroporto e para entender melhor como funciona.
 
 Dia 01/06
 Horário de início: 15:40
@@ -27,7 +27,7 @@ Atividade: Corrigi alguns erros nas funções de cadastrar, pois estava aceitand
 Dia 01/06
 Horário Início: 18:52
 Horário fim: 20:10
-Atividade: Inseri a função "remover_voo". Notei alguns erros em "remover_voo" e ajustei o programa. Inseri a validação com a função "numero_voo_valido" que também foi mais simples de pensar. Como já tinha entendido como funcionada a matriz a partir dos cadastros, para fazer a lógica da "remover_voo" foi mais simples de pensar.
+Atividade: Inseri a função "remover_voo". Notei alguns erros em "remover_voo" e ajustei o programa. Inseri a validação com a função "numero_voo_valido" que também foi mais simples de pensar. Como já tinha entendido como funcionada a matriz e o aeroporto a partir dos cadastros, para fazer a lógica da "remover_voo" foi mais simples de pensar.
 
 
 Dia 02/06
