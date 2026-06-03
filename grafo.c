@@ -103,23 +103,33 @@ int numero_voo_valido(const char *texto) {
  * encadeada nessa linha é um destino com um número de voo.
  */
 void listar_voos_de_aeroporto(MatrizEsparsa* matriz, VetorAeroportos* vetor, char* sigla_origem) {
+    // Recebe uma sigla e lista os voos que partem do aeroporto correspondente a essa sigla
 
-    // Busca o id do aeroporto de origem pela sigla
+    // como a matriz esparsa não trabalha com siglas
+    // precisamos converter a sigla para um número inteiro do aeroporto correspondente
+
+    //  Traduz a sigla para um ID numérico
     int id_origem = buscar_id_por_sigla(vetor, sigla_origem);
 
+    // sigla não existe
     if (id_origem == -1) {
         printf("Aeroporto '%s' nao encontrado.\n", sigla_origem);
         return;
     }
 
     // Garante que o id está dentro dos limites da matriz
+    // Isso é uma proteção contra acesso inválido de memória, a verificação garante que é seguro prosseguir
     if (id_origem >= matriz->capacidade) {
         printf("Nenhum voo cadastrado saindo de %s.\n", sigla_origem);
         return;
     }
 
-    // Percorre a lista encadeada da linha do aeroporto de origem
+    // Acessa a linha do aeroporto na matriz esparsa
+    // A matriz esparsa tem um vetor de ponteiros chamado voos_linha
+    // Cada posição desse vetor corresponde a um aeroporto de origem, pelo seu ID de origem 
+    // acessar o voos_linha[id_origem] nos dá o início da lista de voos que partem desse aeroporto
     NoMatriz* atual = matriz -> voos_linha[id_origem];
+
 
     if (atual == NULL) {
         printf("Nenhum voo cadastrado saindo de %s (%s).\n",
@@ -130,19 +140,21 @@ void listar_voos_de_aeroporto(MatrizEsparsa* matriz, VetorAeroportos* vetor, cha
     printf("\nVoos saindo de %s (%s):\n", vetor->aero[id_origem].cidade, sigla_origem);
     printf("------------------------------------------\n");
 
+    // Percorre a lista encadeada de voos para esse aeroporto de origem
     // Cada nó da lista é um voo: a coluna é o id do destino, a distancia é o número do voo
     while (atual != NULL) {
-        int id_destino = atual->coluna;
-        int numero_voo = atual->distancia;
+        int id_destino = atual->coluna; // coluna é o ID do aeroporto destino
+        int numero_voo = atual->distancia; // distancia é o número do voo cadastrado na matriz
+        //  funciona porque o ID de cada aeroporto é exatamente a sua posição no vetor
 
         printf("  Voo %03d -> %s (%s)\n",
                numero_voo,
+               // imprimir o nome da cidade destino
                vetor->aero[id_destino].cidade,
                vetor->aero[id_destino].sigla);
 
         atual = atual->proxima_linha;
     }
-
     printf("------------------------------------------\n");
 }
 
@@ -174,16 +186,24 @@ void listar_voos_de_aeroporto(MatrizEsparsa* matriz, VetorAeroportos* vetor, cha
 // - visitado: array que marca quais aeroportos já foram visitados neste caminho
 // - caminho: array que guarda os ids dos aeroportos visitados na ordem
 // - tamanho_caminho: quantos aeroportos tem no caminho até agora
-static void dfs(MatrizEsparsa* matriz, VetorAeroportos* vetor, int id_atual, int id_destino, int* visitado, int* caminho, int tamanho_caminho) {
 
-    // Marca o aeroporto atual como visitado e adiciona ao caminho
+// É estática porque é um detalhe interno de implementação
+// Ninguém de fora precisa chamá-la diretamente, só o listar_trajetos
+static void dfs(MatrizEsparsa* matriz, VetorAeroportos* vetor, int id_atual, int id_destino, int* visitado, int* caminho, int tamanho_caminho) {
+   // escolhe um caminho, vai até o fim ou até bater em uma parede (aeroporto já visitado ou sem saída)
+   // e então volta para tentar outro caminho, garantindo que todos os trajetos possíveis são encontrados
+
+
+    // Marca o aeroporto atual como visitado e registra no caminho
     visitado[id_atual] = 1;
-    caminho[tamanho_caminho] = id_atual;
-    tamanho_caminho++;
+    caminho[tamanho_caminho] = id_atual; // funciona como uma pilha: você vai empilhando aeroportos conforme avança
+    tamanho_caminho++; // indica quantos aeroportos estão no trajeto atual
+
 
     // Se chegamos ao destino, imprime o trajeto completo
     if (id_atual == id_destino) {
         printf("  ");
+        // Percorre o array caminho do início ao fim e imprime cada aeroporto com " -> " entre eles
         for (int i = 0; i < tamanho_caminho; i++) {
             int id = caminho[i];
             printf("%s (%s)", vetor->aero[id].cidade, vetor->aero[id].sigla);
@@ -195,16 +215,18 @@ static void dfs(MatrizEsparsa* matriz, VetorAeroportos* vetor, int id_atual, int
         }
         printf("\n");
 
+      //  Se não chegou, visita os vizinhos
     } else {
-        // Ainda não chegamos: visita cada vizinho do aeroporto atual
+        // visita cada vizinho do aeroporto atual
         // (ou seja, percorre a linha do id_atual na matriz esparsa)
         NoMatriz* voo = matriz->voos_linha[id_atual];
 
         while (voo != NULL) {
-            int proximo = voo->coluna;
+            int proximo = voo->coluna; // O próximo aeroporto a visitar é o destino do voo atual
 
             // Só vai para o próximo se ainda não foi visitado neste caminho
             if (!visitado[proximo]) {
+                // para cada destino ainda não visitado, chama a DFS recursivamente
                 dfs(matriz, vetor, proximo, id_destino, visitado, caminho, tamanho_caminho);
             }
             voo = voo->proxima_linha;
@@ -215,6 +237,7 @@ static void dfs(MatrizEsparsa* matriz, VetorAeroportos* vetor, int id_atual, int
 }
 
 // Função principal que o menu chama - prepara tudo e dispara a DFS
+// valida as siglas, prepara os arrays auxiliares e dispara a busca
 void listar_trajetos(MatrizEsparsa* matriz, VetorAeroportos* vetor, char* sigla_origem, char* sigla_destino) {
 
     int id_origem  = buscar_id_por_sigla(vetor, sigla_origem);
@@ -234,11 +257,12 @@ void listar_trajetos(MatrizEsparsa* matriz, VetorAeroportos* vetor, char* sigla_
     }
 
     // Aloca os arrays auxiliares com base no número de aeroportos cadastrados
+    // arrays cujo tamanho é definido em tempo de execução, não em tempo de compilação
     int n = vetor->tamanho;
     int visitado[n];
     int caminho[n];
 
-    // Inicializa todos como não visitados
+    // zera arrays visitados
     for (int i = 0; i < n; i++) {
         visitado[i] = 0;
     }
@@ -253,6 +277,11 @@ void listar_trajetos(MatrizEsparsa* matriz, VetorAeroportos* vetor, char* sigla_
 
     printf("------------------------------------------\n");
 }
+
+
+
+
+
 
 
 // Giovana - Cadastrar um novo aeroporto

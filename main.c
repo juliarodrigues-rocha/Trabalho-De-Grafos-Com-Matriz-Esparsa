@@ -4,7 +4,7 @@
 #include "matriz_esparsa.h"
 #include "grafo.h"
 
-// Limpa o buffer do teclado para evitar leituras erradas
+//  lê e descarta todos os caracteres que ficaram no buffer do teclado após um scanf
 void limpar_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
@@ -59,7 +59,7 @@ int main() {
 
     int opcao;
 
-    do {
+    do { //  garante que o menu aparece pelo menos uma vez antes de verificar a condição de saída
         exibir_menu();
 
         // Valida se a entrada é um número inteiro

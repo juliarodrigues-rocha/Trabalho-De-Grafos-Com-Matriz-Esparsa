@@ -85,7 +85,6 @@ DATA: 31/05/2026 (Sábado)
 
 
 
-
 * SESSÃO 3 — Main com menu complet(o mas ainda sem ter as funções da gi para poder testar o funcionamento correto)
    Início: 21:42 | Término: 22:56
  
