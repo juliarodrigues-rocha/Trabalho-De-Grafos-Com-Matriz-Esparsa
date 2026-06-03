@@ -1,3 +1,7 @@
+Nome: Emely Miguel Moreira
+RA: 25896580
+
+==================================================================================================================================================================================
 Dia 13/05, 21h30 - 22h
 
 Eu, Giovana e Julia formamos um grupo e nos dividimos para fazer o trabalho. Sendo que eu fiquei responsável pelas structs e inicialização tanto do grafo quanto da matriz esparsa e as meninas vão se dividir para implementar o hard code e as funções do menu de opções.
