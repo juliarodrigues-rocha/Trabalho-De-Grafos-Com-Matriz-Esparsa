@@ -61,7 +61,14 @@ int main() {
 
     do {
         exibir_menu();
-        scanf("%d", &opcao);
+
+        // Valida se a entrada é um número inteiro
+        if (scanf("%d", &opcao) != 1) {
+            printf("Opcao invalida. Digite um numero entre 0 e 5.\n");
+            limpar_buffer();
+            opcao = -1;  // força o loop a continuar
+            continue;
+        }
         limpar_buffer();
 
         switch (opcao) {
